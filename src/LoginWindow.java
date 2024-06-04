@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SPLWindow extends JFrame {
+public class LoginWindow extends JFrame {
     private JPanel loginPanel = new JPanel(new GridBagLayout());
     private JPanel buttonPanel = new JPanel(new GridBagLayout());
     private JLabel usernameLabel = new JLabel("Username:");
@@ -12,8 +12,14 @@ public class SPLWindow extends JFrame {
     private JPasswordField password = new JPasswordField(20);
     private JButton login = new JButton("Login");
     private JButton cancel = new JButton("Cancel");
+    Staff loggedIn;
 
-    public SPLWindow() {
+    public LoginWindow() {
+        setTitle("Sales Person Login");
+        setBounds(200, 200, 350, 150);
+        setVisible(true);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         setLayout(new GridBagLayout());
 
         GridBagConstraints loginPanelConstraints = new GridBagConstraints();
@@ -84,36 +90,26 @@ public class SPLWindow extends JFrame {
         cancelConstraints.insets = new Insets(0, 2, 4, 4);
         buttonPanel.add(cancel, cancelConstraints);
 
+        pack();
+
         // ActionListeners
         cancel.addActionListener(e -> dispose());
-        login.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean correct = false;
-                for (Staff staff : Runner.staff) {
-                    if (staff.getUsername().equals(username.getText()) && staff.getPassword().equals(password.getText())) {
-                        correct = true;
-                        break;
-                    }
-                }
-                if (correct) {
-                    MainMenu main = new MainMenu();
-                    main.setVisible(true);
-                    dispose();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Incorrect username or password!");
+        login.addActionListener(e -> {
+            boolean correct = false;
+            for (Staff staffMember : Main.staff) {
+                if (staffMember.getUsername().equals(username.getText()) && staffMember.getPassword().equals(password.getText())) {
+                    correct = true;
+                    loggedIn = staffMember;
+                    break;
                 }
             }
+            if (correct) {
+                MainMenu.setLoggedInUser(loggedIn);
+                Main.mainMenu.pack();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Incorrect username or password!");
+            }
         });
-
-    }
-
-    public static void createWindow() {
-        SPLWindow win = new SPLWindow();
-        win.setTitle("Sales Person Login");
-        win.setBounds(200, 200, 350, 150);
-        win.setVisible(true);
-        win.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        win.pack();
     }
 }

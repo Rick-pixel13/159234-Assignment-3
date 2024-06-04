@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 public abstract class Computer {
     private String category;
     private String type;
@@ -7,8 +9,8 @@ public abstract class Computer {
     private String cpuFam;
 
     // constructor
-    public Computer(String type, String id, String brand, String cpu, int price) {
-        setCategory();
+    public Computer(String category, String type, String id, String brand, String cpu, int price) {
+        setCategory(category);
         setType(type);
         setId(id);
         setBrand(brand);
@@ -17,10 +19,11 @@ public abstract class Computer {
     }
 
     // setters and getters
-    public void setCategory() {
-        this.category = this.getClass().getSimpleName();
+    public void setCategory(String category) {
         if (category.equals("Desktop")) {
             this.category = "Desktop PC";
+        } else {
+            this.category = category;
         }
     }
     public String getCategory() { return category; }
@@ -31,18 +34,7 @@ public abstract class Computer {
     public void setBrand(String brand) { this.brand = brand; }
     public String getBrand() {return brand;}
     public void setPrice(int price) { this.price = price; }
-    public double getPrice() { return price; }
+    public int getPrice() { return price; }
     public void setCpuFam(String cpuFam) { this.cpuFam = cpuFam; }
     public String getCpuFam() { return cpuFam; }
-
-    @Override
-    public String toString() {
-        return String.format("%s %s %s %s %s",
-                getClass().getSimpleName(),
-                getType(),
-                getId(),
-                getBrand(),
-                getCpuFam()
-        );
-    }
 }

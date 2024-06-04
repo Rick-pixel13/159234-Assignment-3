@@ -12,7 +12,7 @@ public class ComputerDetails {
     public static ArrayList<Computer> createList() {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader("src/computers.txt"));
+            reader = new BufferedReader(new FileReader("computers.txt"));
             String line = reader.readLine();
             if (line == null) {
                 throw new IOException();
@@ -21,13 +21,13 @@ public class ComputerDetails {
                 String[] specs = line.split(",");
                 switch (specs[0]) {
                     case "Desktop PC":
-                        desktops.add(new Desktop(specs[1], specs[2], specs[3], specs[4], Integer.parseInt(specs[5]), Integer.parseInt(specs[6]), Integer.parseInt(specs[7])));
+                        desktops.add(new Desktop(specs[0], specs[1], specs[2], specs[3], specs[4], Integer.parseInt(specs[5]), Integer.parseInt(specs[6]), Integer.parseInt(specs[7])));
                         break;
                     case "Laptop":
-                        laptops.add(new Laptop(specs[1], specs[2], specs[3], specs[4], Integer.parseInt(specs[5]), Integer.parseInt(specs[6]), Double.parseDouble(specs[7]), Integer.parseInt(specs[8])));
+                        laptops.add(new Laptop(specs[0], specs[1], specs[2], specs[3], specs[4], Integer.parseInt(specs[5]), Integer.parseInt(specs[6]), Double.parseDouble(specs[7]), Integer.parseInt(specs[8])));
                         break;
                     case "Tablet":
-                        tablets.add(new Tablet(specs[1], specs[2], specs[3], specs[4], Double.parseDouble(specs[5]), Integer.parseInt(specs[6])));
+                        tablets.add(new Tablet(specs[0], specs[1], specs[2], specs[3], specs[4], Double.parseDouble(specs[5]), Integer.parseInt(specs[6])));
                         break;
                     default:
                         throw new IllegalArgumentException();

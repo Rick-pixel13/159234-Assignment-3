@@ -5,34 +5,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProductDisplay extends JFrame {
-    private JTable productTable;
-    private DefaultTableModel tableModel;
-    private JComboBox<String> categoryComboBox;
-    private JComboBox<String> typeComboBox;
-    private BrowseTab productPanel;
+public class ProductDisplay extends JPanel {
+    static JTable productTable;
+    private static DefaultTableModel tableModel;
+    private static JComboBox<String> categoryComboBox;
+    private static JComboBox<String> typeComboBox;
+    private static BrowseTab productPanel;
     private UpdateTab detailsPanel;
-    private static ArrayList<Computer> compList = ComputerDetails.createList();
+    private JPanel comboBoxPanel;
+    public static ArrayList<Computer> compList = ComputerDetails.createList();
     private Map<String, ArrayList<String>> typeByCategory;
 
     public ProductDisplay() {
-        // Set up the JFrame
-        setTitle("Product Display");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         // Set up the tabbed pane
         JTabbedPane tabbedPane = new JTabbedPane();
-        getContentPane().add(tabbedPane);
+        add(tabbedPane);
 
         // Set up the product display tab
         productPanel = new BrowseTab();
         productPanel.setLayout(new BorderLayout());
 
-        // Set up the category and sub-category combo boxes
+        // Set up the category and type combo boxes
         categoryComboBox = new JComboBox<>();
         typeComboBox = new JComboBox<>();
-        JPanel comboBoxPanel = new JPanel();
+        comboBoxPanel = new JPanel();
         comboBoxPanel.add(categoryComboBox);
         comboBoxPanel.add(typeComboBox);
         productPanel.add(comboBoxPanel, BorderLayout.NORTH);
@@ -46,26 +42,24 @@ public class ProductDisplay extends JFrame {
         detailsPanel = new UpdateTab();
 
         // Add the tabs to the tabbed pane
-        tabbedPane.addTab("Product Display", productPanel);
-        tabbedPane.addTab("Product Details", detailsPanel);
+        tabbedPane.addTab("Browse Products", productPanel);
+        tabbedPane.addTab("Check/Update Product Details", detailsPanel);
 
         // Set up the category and sub-category data
         typeByCategory = new HashMap<>();
         typeByCategory.put("Desktop PC", new ArrayList<String>() {{
-//            add(); need a placeholder
             add("Gaming");
             add("Home & Study");
             add("Business");
             add("Compact");
         }});
         typeByCategory.put("Laptop", new ArrayList<String>() {{
-//            add(); need a placeholder
+            add("Business");
             add("Gaming");
             add("Home & Study");
             add("Thin & Light");
         }});
         typeByCategory.put("Tablet", new ArrayList<String>() {{
-//            add(); need a placeholder
             add("Android");
             add("Apple");
             add("Windows");
@@ -94,24 +88,37 @@ public class ProductDisplay extends JFrame {
         });
 
         // Set up the product table listener
-//        productTable.getSelectionModel().addListSelectionListener(e -> {
-//            int selectedRow = productTable.getSelectedRow();
-//            if (selectedRow != -1) {
-//                String category = (String) tableModel.getValueAt(selectedRow, 0);
-//                String type = (String) tableModel.getValueAt(selectedRow, 1);
-//                String id = (String) tableModel.getValueAt(selectedRow, 2);
-//                String brand = (String) tableModel.getValueAt(selectedRow, 3);
-//                String cpu = (String) tableModel.getValueAt(selectedRow, 4);
-//                String price = (String) tableModel.getValueAt(selectedRow, 5);
-//                setText((name != null) ? name : "");
-//                priceTextField.setText((price != null) ? price : "");
-//                descriptionTextField.setText((description != null) ? description : "");
-//                nameTextField.setText((name != null) ? name : "");
-//                priceTextField.setText((price != null) ? price : "");
-//                priceTextField.setText((description != null) ? description : "");
-//            }
-//        });
-
+        productTable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = productTable.getSelectedRow();
+            if (selectedRow != -1) {
+                String id = (String) tableModel.getValueAt(selectedRow, 2);
+                for (Computer comp : compList) {
+                    if (comp.getId().equals(id)) {
+                        detailsPanel.setModel(id);
+                        detailsPanel.setCategory(comp.getCategory());
+                        detailsPanel.setType(comp.getType());
+                        detailsPanel.setBrand(comp.getBrand());
+                        detailsPanel.setCpu(comp.getCpuFam());
+                        detailsPanel.setPrice(String.valueOf(comp.getPrice()));
+                        if (comp instanceof Desktop) {
+                            detailsPanel.setMemory(String.valueOf(((Desktop) comp).getMemSize()));
+                            detailsPanel.setSsd(String.valueOf(((Desktop) comp).getSsd()));
+                            detailsPanel.setScreen(null);
+                        }
+                        if (comp instanceof Laptop) {
+                            detailsPanel.setMemory(String.valueOf(((Laptop) comp).getMemSize()));
+                            detailsPanel.setSsd(String.valueOf(((Laptop) comp).getSsd()));
+                            detailsPanel.setScreen(String.valueOf(((Laptop) comp).getScreenSize()));
+                        }
+                        if (comp instanceof Tablet) {
+                            detailsPanel.setMemory(null);
+                            detailsPanel.setSsd(null);
+                            detailsPanel.setScreen(String.valueOf(((Tablet) comp).getScreenSize()));
+                        }
+                    }
+                }
+            }
+        });
         setVisible(true);
     }
 
@@ -119,32 +126,39 @@ public class ProductDisplay extends JFrame {
         typeComboBox.removeAllItems();
         String selectedCategory = (String) categoryComboBox.getSelectedItem();
         if (selectedCategory != null) {
-            ArrayList<String> subCategories = typeByCategory.get(selectedCategory);
-            if (subCategories != null) {
-                typeComboBox.addItem("All");
-                for (String subCategory : subCategories) {
-                    typeComboBox.addItem(subCategory);
+            ArrayList<String> types = typeByCategory.get(selectedCategory);
+            if (types != null) {
+                typeComboBox.addItem("Select Type");
+                for (String type : types) {
+                    typeComboBox.addItem(type);
                 }
             }
         }
     }
 
-    private void updateProductTable() {
+    public static void updateProductTable() {
         tableModel.setRowCount(0);
         String selectedCategory = (String) categoryComboBox.getSelectedItem();
-        String selectedSubCategory = (String) typeComboBox.getSelectedItem();
-        for (Computer item : compList) { // replace with actual product data
-            String category = item.getCategory();
-            String type = item.getType();
-            String id = item.getId();
-            String brand = item.getBrand();
-            String cpu = item.getCpuFam();
-            double price = item.getPrice();
-            tableModel.addRow(new String[]{category, type, id, brand, cpu, String.valueOf(price)});
+        String selectedType = (String) typeComboBox.getSelectedItem();
+        for (Computer item : compList) {
+            boolean matchesCategory = selectedCategory.equals("All") || item.getCategory().equals(selectedCategory);
+            boolean matchesType = selectedType == null || selectedType.equals("Select Type") || item.getType().equals(selectedType);
+            if (matchesCategory && matchesType) {
+                String category = String.valueOf(item.getCategory());
+                String type = String.valueOf(item.getType());
+                String id = item.getId();
+                String brand = item.getBrand();
+                String cpu = item.getCpuFam();
+                int price = item.getPrice();
+                tableModel.addRow(new String[]{category, type, id, brand, cpu, String.valueOf(price)});
             }
+        }
+    }
+    public static void enableEditing() {
+        UpdateTab.setEditable(true);
     }
 
-public static void main(String[] args) {
-    ProductDisplay display = new ProductDisplay();
+    public static void disableEditing() {
+        UpdateTab.setEditable(false);
     }
 }

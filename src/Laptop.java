@@ -4,8 +4,8 @@ public class Laptop extends Computer {
     private double screenSize;
 
     //constructor
-    public Laptop(String type, String id, String brand, String cpu, int mem, int ssd, double screen, int price) {
-        super(type, id, brand, cpu, price);
+    public Laptop(String category, String type, String id, String brand, String cpu, int mem, int ssd, double screen, int price) {
+        super(category,type, id, brand, cpu, price);
         setMemSize(mem);
         setSsd(ssd);
         setScreenSize(screen);
@@ -18,14 +18,4 @@ public class Laptop extends Computer {
     public int getSsd() { return ssd; }
     public void setScreenSize(double screenSize) { this.screenSize = screenSize; }
     public double getScreenSize() { return screenSize; }
-
-    @Override
-    public String toString() {
-        return super.toString() + String.format(" %d %d %.1f %.1f",
-                getMemSize(),
-                getSsd(),
-                getScreenSize(),
-                getPrice()
-        );
-    }
 }

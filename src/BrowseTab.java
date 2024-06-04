@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +11,7 @@ public class BrowseTab extends JPanel {
     private JComboBox<String> category;
     private JComboBox<String> type;
     private ProductsTable products;
-    private HashMap<String, ArrayList<String>> typeByCategory;
+    private JTable table;
 
     public BrowseTab() {
         setLayout(new GridBagLayout());
@@ -21,8 +20,10 @@ public class BrowseTab extends JPanel {
         typeLabel = new JLabel("Computer Type");
         category = new JComboBox();
         type = new JComboBox();
+
+        // setting up table
         products = new ProductsTable();
-        JTable table = new JTable(products);
+        table = new JTable(products);
 
         // adding the items to the combo boxes
         category.addItem("All");
@@ -88,80 +89,5 @@ public class BrowseTab extends JPanel {
         tableConstraints.weighty = 1.0;
         tableConstraints.insets = new Insets(4, 4, 4, 4);
         add(table, tableConstraints);
-
-        typeByCategory = new HashMap<>();
-        typeByCategory.put("Desktop PC", new ArrayList<String>() {{
-            add("Gaming");
-            add("Home & Study");
-            add("Business");
-            add("Compact");
-        }});
-        typeByCategory.put("Laptop", new ArrayList<String>() {{
-            add("Gaming");
-            add("Home & Study");
-            add("Thin & Light");
-        }});
-        typeByCategory.put("Tablet", new ArrayList<String>() {{
-            add("Android");
-            add("Apple");
-            add("Windows");
-        }});
-
-        category.addItem("All");
-        for (String cat : typeByCategory.keySet()) {
-            category.addItem(cat);
-        }
-
-        updateType();
-        updateProductTable();
-        // action listeners
-        category.addActionListener(e -> {
-            updateType();
-            updateProductTable();
-        });
-
-        type.addActionListener(e -> updateProductTable());
-
-//        products.getSelectionModel().addListSelectionListener(e -> {
-//           int selectedRow = products.getSelectedRow();
-//           if (selectedRow != -1) {
-//               String category = (String) table.getValueAt(selectedRow, 0);
-//               String type = (String) table.getValueAt(selectedRow, 1);
-//               String brand = (String) table.getValueAt(selectedRow, 2);
-//               String cpu = (String) table.getValueAt(selectedRow, 3);
-//               String memory = (String) table.getValueAt(selectedRow, 4);
-//               String price = (String) table.getValueAt(selectedRow, 5);
-//           }
-//        });
-
-    }
-
-    private void updateType() {
-        type.removeAllItems();
-        String selectedCategory = (String) category.getSelectedItem();
-        if (selectedCategory != null) {
-            ArrayList<String> typeofComputers = typeByCategory.get(selectedCategory);
-            if (type != null) {
-                type.addItem("All"); // can use switch statement here to add placeholder of each type
-                for (String typeOfComp : typeofComputers) {
-                    type.addItem(typeOfComp);
-                }
-            }
-        }
-    }
-    private void updateProductTable() {
-
-    }
-
-
-
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        BrowseTab birthdayPartyPanel = new BrowseTab();
-        frame.add(birthdayPartyPanel);
-        frame.pack();
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.setVisible(true);
     }
 }
