@@ -12,7 +12,7 @@ public class ComputerDetails {
     public static ArrayList<Computer> createList() {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader("computers.txt"));
+            reader = new BufferedReader(new FileReader("src/computers.txt"));
             String line = reader.readLine();
             if (line == null) {
                 throw new IOException();
